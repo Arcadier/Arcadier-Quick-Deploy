@@ -25,12 +25,24 @@ if (option == "init") {
   shell.exec("mkdir css");
   shell.exec("mkdir scripts");
   shell.cd("scripts");
-  makeFile("renderer.js", thisFile + "/prewritten/renderer.js")
+  makeFile("renderer.js", thisFile + "/prewritten/renderer.js");
+  makeFile("adminScript.js",thisFile + "/prewritten/admin.js");
+  makeFile("userScript.js", thisFile + "/prewritten/userscripts.js");
   shell.cd("..")
   shell.exec("mkdir images");
   // call write for render.html
   shell.cd("..");
-  child.execSync('firebase init', { stdio: 'inherit' });
+  try {
+    child.execSync('firebase init', { stdio: 'inherit' });
+  }
+  catch(err){
+    console.log("\n Downloading Firebase....")
+    child.execSync('npm install -g firebase-tools', {stdio: 'inherit'});
+    child.execSync('firebase init', {stdio: 'inherit'});
+  }
+  var firebaserc = fs.readFileSync(".firebaserc");
+  firebaserc = JSON.parse(firebaserc);
+  firebaseUrl = firebaserc["projects"]["default"]+".firebaseapp.com";
   shell.cd("..");
   shell.cd("zip-files");
   shell.exec("mkdir admin");
@@ -56,7 +68,7 @@ if (option == "init") {
   shell.exec("mkdir images");
   shell.cd("..");
   shell.cd("..");
-  shell.exec("firebase deploy");
+  shell.exec("arcadier deploy");
 
 
 
@@ -78,6 +90,6 @@ else if (option == "deploy") {
 }
 // shell.exec("mkdir")
 function makeFile(filePathWrite, filePathRead) {
-  var read = fs.readFileSync(filePathRead);
-  fs.writeFileSync(filePathWrite, read.toString());
+  var read = fs.readFileSync(filePathRead).toString().replaceAll("<BASE-URL-FOR-FIREBASE-WEBAPP>",firebaseUrl);
+  fs.writeFileSync(filePathWrite, read);
 }
