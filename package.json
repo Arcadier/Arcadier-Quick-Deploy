@@ -1,12 +1,12 @@
 {
   "name": "arcadier-tools",
-  "version": "1.1.9",
+  "version": "1.1.10",
   "description": "",
   "main": "index.js",
   "scripts": {
     "build": "echo test",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "init":"firebase init"
+    "init": "firebase init"
   },
   "keywords": [],
   "author": "",

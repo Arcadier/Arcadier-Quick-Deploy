@@ -6,6 +6,7 @@ const option = cmd.args[0];
 const fs = require("fs");
 var client = require('firebase-tools');
 var child = require('child_process');
+var firebaseUrl;
 String.prototype.replaceAll = function(search, replacement) {
     var target = this;
     return target.split(search).join(replacement);
@@ -29,7 +30,18 @@ if(option=="init"){
   shell.exec("mkdir images");
   // call write for render.html
   shell.cd("..");
-  child.execSync('firebase init', {stdio: 'inherit'});
+  try{
+    child.execSync('firebase init', {stdio: 'inherit'});
+  }
+  catch(err){
+    console.log("\n Downloading Firebase...")
+    child.execSync('npm install -g firebase-tools', {stdio: 'inherit'});
+    child.execSync('firebase init', {stdio: 'inherit'});
+  }
+  var firebaserc = fs.readFileSync(".firebaserc");
+  firebaserc = JSON.parse(firebaserc);
+  firebaseUrl = firebaserc["projects"]["default"]+".firebaseapp.com";
+  console.log(firebaseUrl);
   shell.cd("..");
   shell.cd("zip-files");
   shell.exec("mkdir admin");
@@ -51,6 +63,8 @@ if(option=="init"){
   shell.exec("mkdir scripts");
   shell.exec("mkdir images");
   shell.cd("..");
+  shell.cd("..");
+  shell.exec("firebase deploy");
 
 
 
@@ -61,7 +75,7 @@ else if(option == "firebase-login")
     child.execSync('firebase login', {stdio: 'inherit'});
   }
   catch(err){
-    console.log("\n Ran")
+    console.log("\n Downloading Firebase....")
     child.execSync('npm install -g firebase-tools', {stdio: 'inherit'});
     child.execSync('firebase login', {stdio: 'inherit'});
   }
@@ -74,6 +88,6 @@ else if(option == "deploy")
 }
 // shell.exec("mkdir")
 function makeFile(filePathWrite , filePathRead){
-  var read = fs.readFileSync(filePathRead);
-  fs.writeFileSync(filePathWrite,read.toString());
+  var read = fs.readFileSync(filePathRead).toString().replaceAll("<BASE-URL-FOR-FIREBASE-WEBAPP>",firebaseUrl);
+  fs.writeFileSync(filePathWrite,read);
 }
