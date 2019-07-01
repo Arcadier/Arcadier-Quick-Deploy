@@ -31,26 +31,24 @@ String.prototype.replaceAll = function (search, replacement) {
 var re = /<script[\s\S]*?>[\s\S]*?<\/script>/gi;
 var l = htmlString.match(re);
 var scripts = [];
-if (l)
-{
+if (l) {
 
-  var urls = [];
-  for (var i = 0; i < l.length; i++) {
-      var currStr = l[i];
-      currStr = currStr.replace(/<script[\s\S]*?>/gi, "");
-      currStr = currStr.replace("</script>", "");
-      if (currStr != "") {
-          scripts.push(currStr);
-      }
-      else {
-          var extScript = l[i];
-          extScript = extScript.replace('<script type="text/javascript" src="', "");
-          extScript = extScript.replace('"></script>', "");
-          urls.push(extScript);
-      }
+    var urls = [];
+    for (var i = 0; i < l.length; i++) {
+        var currStr = l[i];
+        currStr = currStr.replace(/<script[\s\S]*?>/gi, "");
+        currStr = currStr.replace("</script>", "");
+        if (currStr != "") {
+            scripts.push(currStr);
+        }
+        else {
+            var extScript = l[i];
+            extScript = extScript.replace('<script type="text/javascript" src="', "");
+            extScript = extScript.replace('"></script>', "");
+            urls.push(extScript);
+        }
 
-      // console.log(l[i]);
-  }
+    }
 }
 
 
