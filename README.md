@@ -14,7 +14,7 @@ Install arcadier-tools using:<br>
 
 Windows
 ```bash
-npm install arcadier-tools -g
+npm install -g arcadier-tools
 ```
 
 Mac and Ubuntu
@@ -24,7 +24,7 @@ sudo npm install -g arcadier-tools
 
 ![Install](gif/install.gif)
 
-After installing the package run the following to setup the arcadier-tools globally.
+After installing the package run the following to setup the arcadier-tools. This will take a minute or two so please don't type anything till you see "Setup Complete".
 
 Windows
 ```bash
@@ -36,7 +36,7 @@ Mac and Ubuntu
 sudo arcadier-setup
 ```
 
-![Setup](gif/setup.gif)
+![Setup](gif/setup2.gif)
 
 ## Setting up the development environment
 
@@ -116,11 +116,11 @@ This will automatically create the following in your folder:
 
 You need to upload the ```UploadThis.zip``` file on your developer dashboard. If you have done everything perfectly, you should see "Deployed Successfully" on your plugin.
 
-![upload zip](gif/upload-zip.gif)
+![upload zip](gif/zipUpload.gif)
 
 ### Start Coding!!
 
-Now you having everything ready to start coding. All your code will be written inside the ```host-files``` directory.
+Now you have everything ready to start coding. All your code will be written inside the ```host-files``` directory.
 
 #### Admin Front-End
 
@@ -150,6 +150,16 @@ Use the command to push all the changes:
 ```bash
 arcadier deploy
 ````
-![looking at changes](gif/making-changes.gif)
+![looking at changes](gif/deploying.gif)
 
 *Make sure you hard refresh (ctrl+shift+r) to see the changes*
+
+### Finalizing
+
+Once you are done developing your plugin, it's a good idea to disconnect it from firebase. Use the following command to create a zip file disconnected from firebase.
+
+```bash
+arcadier finalize
+```
+
+![finalize](gif/finalize.gif)
