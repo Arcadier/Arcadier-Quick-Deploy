@@ -1,84 +1,127 @@
+String.prototype.replaceAll = function (search, replacement) {
+   var target = this;
+   return target.split(search).join(replacement);
+};
+
+$.getMultiScripts = function (arr, path) {
+   var _arr = $.map(arr, function (scr) {
+       return $.getScript((path || "") + scr);
+   });
+
+   _arr.push($.Deferred(function (deferred) {
+       $(deferred.resolve);
+   }));
+
+   return $.when.apply($, _arr);
+}
+
 var baseUrl = document.currentScript.src;
 
-baseUrl = baseUrl.replace("renderer.js", "");
+baseUrl = baseUrl.replace("server-files/renderer.js", "");
 
 // file to be rendered in
-var renderFile = "../render.html";
+var renderFile = "admin/html/index.html";
 
 var url = baseUrl + renderFile;
 url = url.replace("https://", "https://cors-anywhere.herokuapp.com/")
 var settings = {
-    "url": url,
-    "method": "GET",
-    "async": false
+   "url": url,
+   "method": "GET",
+   "async": false
 };
 
 $.ajax(settings).done(function (Response) {
-    htmlString = Response;
+
+   htmlString = Response.replaceAll("http://", "https://");
 });
 
-// console.log(htmlString);
+// removing all comment lines before rendering the html page
+var commentRegEx = /<!--([\s\S]*?)-->/g;
+htmlString = htmlString.replace(commentRegEx, "");
 
-var h = $.parseHTML(htmlString);
-// console.log(h);
+var linkReg = /<link([\s\S]*?)>/g;
+var links = htmlString.match(linkReg);
+if (!links)
+{
+  links = [];
+}
+htmlString = htmlString.replace(linkReg, '');
+for (i = 0; i < links.length; i++) {
+   if (/rel=["']stylesheet["']/g.exec(links[i])) {
+       if (/href=["']css\//g.exec(links[i])) {
+           links[i] = links[i].replace("css/", baseUrl + "admin/css/")
+       }
+   };
+}
 
-String.prototype.replaceAll = function (search, replacement) {
-    var target = this;
-    return target.split(search).join(replacement);
-};
+// image tags being changed
+var imageReg = /<img([^>]*?) src=["'](\.\/)?images([\s\S]*?)>/g;
+var imgTag = htmlString.match(imageReg);
+if (!imgTag)
+{
+  imgTag = [];
+}
+for (i = 0; i < imgTag.length; i++) {
+   var currProcess = imgTag[i].replace(/src=["']/, "src=\"" + baseUrl + "admin/").replace("'", "\"");
 
+   htmlString = htmlString.replace(imgTag[i], currProcess);
+}
+var htmlNodes = $.parseHTML(htmlString);
+for (i = 0; i < links.length; i++) {
+   htmlNodes.push($.parseHTML(links[i])[0]);
+}
 
-var re = /<script[\s\S]*?>[\s\S]*?<\/script>/gi;
-var l = htmlString.match(re);
+var scriptRegEx = /<script[\s\S]*?>[\s\S]*?<\/script>/gi;
+var script = htmlString.match(scriptRegEx);
+
+if (!script) script = [];
 var scripts = [];
-if (l) {
+var http = [];
+var nonHttp = [];
+for (var i = 0; i < script.length; i++) {
+   var currStr = script[i];
+   currStr = currStr.replace(/<script[\s\S]*?>/, "");
+   currStr = currStr.replace("</script>", "");
 
-    var urls = [];
-    for (var i = 0; i < l.length; i++) {
-        var currStr = l[i];
-        currStr = currStr.replace(/<script[\s\S]*?>/gi, "");
-        currStr = currStr.replace("</script>", "");
-        if (currStr != "") {
-            scripts.push(currStr);
-        }
-        else {
-            var extScript = l[i];
-            extScript = extScript.replace('<script type="text/javascript" src="', "");
-            extScript = extScript.replace('"></script>', "");
-            urls.push(extScript);
-        }
 
-    }
+   if (!/[\s]/.exec(currStr) && currStr!="") {
+       scripts.push(currStr);
+   }
+   else {
+       var extScript = script[i];
+       var urlReg = /src=["']([\s\S]*?)["']/g;
+       extScript = extScript.match(urlReg)[0].replace(/src=["']/, "").replace(/["']/, "");
+
+       if (extScript.startsWith("https://") || extScript.startsWith("http://")) {
+           http.push(extScript);
+       } else {
+           nonHttp.push(extScript);
+       }
+
+   }
 }
 
-
-
-// for (var i = 0; i < urls.length; i++) {
-//     var newScript = document.createElement("script");
-//     newScript.type = 'text/javascript';
-//     newScript.src = urls[i];
-//     document.head.appendChild(newScript);
-// }
-
-// console.log(urls);
-
-function callAtStart() {
-
-    var l = document.getElementById("allFrontEnd");
-    for (var i = 0; i < h.length; i++) {
-        // console.log(h[i]);
-        l.appendChild(h[i]);
-    }
-
-
-
-    for (var i = 0; i < scripts.length; i++) {
-        var newScript = document.createElement("script");
-        newScript.type = 'text/javascript';
-        var code = document.createTextNode(scripts[i]);
-        newScript.appendChild(code);
-        l.appendChild(newScript);
-    }
+for (i = 0; i < nonHttp.length; i++) {
+   nonHttp[i] = baseUrl + "admin/" + nonHttp[i];
 }
 
-callAtStart();
+var urls = http.concat(nonHttp);
+
+
+$.getMultiScripts(urls, '').done(function () {
+   // all scripts loaded
+   var front = document.getElementById("allFrontEnd");
+   for (var i = 0; i < htmlNodes.length; i++) {
+       front.appendChild(htmlNodes[i]);
+   }
+   if (scripts.length) {
+       for (var i = 0; i < scripts.length; i++) {
+           var newScript = document.createElement("script");
+           newScript.type = 'text/javascript';
+           var code = document.createTextNode(scripts[i]);
+           newScript.appendChild(code);
+           front.appendChild(newScript);
+       }
+   }
+
+});

@@ -4,6 +4,7 @@ const program = require("commander");
 const cmd = program.parse(process.argv);
 const option = cmd.args[0];
 const fs = require("fs");
+const archiver = require('archiver');
 var client = require('firebase-tools');
 var child = require('child_process');
 var firebaseUrl;
@@ -16,22 +17,13 @@ if (option == "init") {
   thisFile = thisFile.replace('/bin', '')
   shell.exec("mkdir host-files");
   shell.exec("mkdir zip-files");
+
+
+
   // shell.exec("firebase login");
   shell.cd("host-files");
   // child.execSync("cd host-files", {stdio: 'inherit'});
   shell.exec("mkdir public");
-  shell.cd("public");
-  makeFile('render.html', thisFile + "/prewritten/render.html");
-  shell.exec("mkdir css");
-  shell.exec("mkdir scripts");
-  shell.cd("scripts");
-  makeFile("renderer.js", thisFile + "/prewritten/renderer.js");
-  makeFile("adminScript.js",thisFile + "/prewritten/admin.js");
-  makeFile("userScript.js", thisFile + "/prewritten/userscripts.js");
-  shell.cd("..")
-  shell.exec("mkdir images");
-  // call write for render.html
-  shell.cd("..");
   try {
     child.execSync('firebase init', { stdio: 'inherit' });
   }
@@ -43,35 +35,61 @@ if (option == "init") {
   var firebaserc = fs.readFileSync(".firebaserc");
   firebaserc = JSON.parse(firebaserc);
   firebaseUrl = firebaserc["projects"]["default"]+".firebaseapp.com";
+  shell.cd("public");
+  shell.exec("mkdir admin");
+  shell.exec("mkdir user");
+  shell.exec("mkdir server-files");
+  shell.cd("server-files");
+  makeFile("renderer.js", thisFile + "/prewritten/renderer.js");
   shell.cd("..");
+  shell.cd("admin");
+  shell.exec("mkdir html");
+  shell.exec("mkdir css");
+  shell.exec("mkdir scripts");
+  shell.exec("mkdir images");
+  shell.cd("scripts");
+  makeFile("scripts.js",thisFile + "/prewritten/admin.js");
+  shell.cd("..");
+  shell.cd("html");
+  makeFile('index.html', thisFile + "/prewritten/render.html");
+  shell.cd("..");
+  shell.cd("..");
+  shell.cd("user");
+  shell.exec("mkdir html");
+  shell.exec("mkdir css");
+  shell.exec("mkdir scripts");
+  shell.exec("mkdir images");
+  shell.cd("scripts");
+  makeFile("scripts.js", thisFile + "/prewritten/userscripts.js");
+  shell.cd("..");
+  shell.cd("..");
+  shell.cd("..");
+  shell.cd("..");
+
   shell.cd("zip-files");
   shell.exec("mkdir admin");
   shell.exec("mkdir user");
 
   shell.cd("admin");
-  shell.exec("mkdir css");
   shell.exec("mkdir html");
   shell.cd("html");
   makeFile("index.html", thisFile + "/prewritten/zip.html");
   shell.cd("..");
-  shell.exec("mkdir scripts");
-  shell.exec("mkdir images");
   shell.cd("..");
 
   shell.cd("user");
-  shell.exec("mkdir css");
-  shell.exec("mkdir html");
   shell.exec("mkdir scripts");
   shell.cd("scripts");
   makeFile("scripts.js", thisFile + "/prewritten/user.js");
   shell.cd("..");
-  shell.exec("mkdir images");
   shell.cd("..");
   shell.cd("..");
   shell.exec("arcadier deploy");
-
-
-
+  var output = fs.createWriteStream('./UploadThis.zip');
+  var archive = archiver("zip");
+  archive.pipe(output);
+  archive.directory("zip-files",{name:"zip-files"});
+  archive.finalize();
 }
 else if (option == "firebase-login") {
   try {
@@ -87,6 +105,21 @@ else if (option == "firebase-login") {
 else if (option == "deploy") {
   shell.cd("host-files");
   child.execSync('firebase deploy', { stdio: 'inherit' });
+}
+else if(option == "finalize")
+{
+  var output = fs.createWriteStream('./package.zip');
+  var archive = archiver("zip");
+  archive.pipe(output);
+  shell.cd("host-files/public");
+  archive.directory("admin",{name:"admin"});
+  archive.directory("user",{name:"user"});
+
+  archive.finalize();
+}
+else
+{
+  console.log(option + " is not a valid arcadier command")
 }
 // shell.exec("mkdir")
 function makeFile(filePathWrite, filePathRead) {

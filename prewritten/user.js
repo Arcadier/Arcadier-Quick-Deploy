@@ -1,3 +1,3 @@
-$.getScript('https://<BASE-URL-FOR-FIREBASE-WEBAPP>/scripts/userScript.js', function () {
+$.getScript('https://<BASE-URL-FOR-FIREBASE-WEBAPP>/user/scripts/scripts.js', function () {
 
 });
