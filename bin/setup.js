@@ -23,4 +23,5 @@ catch(err)
   shell.exec("npm install -g commander");
 }
 
+
 console.log("Setup Complete!");

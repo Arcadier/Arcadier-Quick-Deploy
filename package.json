@@ -9,7 +9,17 @@
     "init": "firebase init"
   },
   "keywords": [],
-  "author": "",
+  "author": "Abhinav and Naseer",
+  "contributors":[
+    {
+      "name":"Abhinav Narayana Balasubramaniam",
+      "email":"nabhinav2000@gmail.com"
+    },
+    {
+      "name":"Naseer Ahmed Khan",
+      "email":"naseerfathima2426@gmail.com"
+    }
+  ],
   "license": "ISC",
   "dependencies": {
     "archiver": "^3.0.0",

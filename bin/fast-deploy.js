@@ -1,11 +1,12 @@
 #! /usr/bin/env node
 const shell = require("shelljs");
 const program = require("commander");
+var client = require('firebase-tools');
 const cmd = program.parse(process.argv);
 const option = cmd.args[0];
 const fs = require("fs");
 const archiver = require('archiver');
-var client = require('firebase-tools');
+
 var child = require('child_process');
 var firebaseUrl;
 String.prototype.replaceAll = function(search, replacement) {
