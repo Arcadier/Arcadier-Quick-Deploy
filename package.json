@@ -1,6 +1,6 @@
 {
   "name": "arcadier-tools",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -10,14 +10,14 @@
   },
   "keywords": [],
   "author": "Abhinav and Naseer",
-  "contributors":[
+  "contributors": [
     {
-      "name":"Abhinav Narayana Balasubramaniam",
-      "email":"nabhinav2000@gmail.com"
+      "name": "Abhinav Narayana Balasubramaniam",
+      "email": "nabhinav2000@gmail.com"
     },
     {
-      "name":"Naseer Ahmed Khan",
-      "email":"naseerfathima2426@gmail.com"
+      "name": "Naseer Ahmed Khan",
+      "email": "naseerfathima2426@gmail.com"
     }
   ],
   "license": "ISC",

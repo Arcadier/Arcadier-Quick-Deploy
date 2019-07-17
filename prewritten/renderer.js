@@ -83,8 +83,7 @@ for (var i = 0; i < script.length; i++) {
    currStr = currStr.replace(/<script[\s\S]*?>/, "");
    currStr = currStr.replace("</script>", "");
 
-
-   if (!/[\s]/.exec(currStr) && currStr!="") {
+   if (currStr.replaceAll("\n","")!="") {
        scripts.push(currStr);
    }
    else {
@@ -105,10 +104,10 @@ for (i = 0; i < nonHttp.length; i++) {
    nonHttp[i] = baseUrl + "admin/" + nonHttp[i];
 }
 
-var urls = http.concat(nonHttp);
+// var urls = http.concat(nonHttp);
 
 
-$.getMultiScripts(urls, '').done(function () {
+$.getMultiScripts(http, '').done(function () {
    // all scripts loaded
    var front = document.getElementById("allFrontEnd");
    for (var i = 0; i < htmlNodes.length; i++) {
@@ -123,5 +122,8 @@ $.getMultiScripts(urls, '').done(function () {
            front.appendChild(newScript);
        }
    }
+   $.getMultiScripts(nonHttp).done(function(){
+     console.log("Done");
+   });
 
 });

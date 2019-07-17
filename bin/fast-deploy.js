@@ -13,6 +13,7 @@ String.prototype.replaceAll = function(search, replacement) {
     var target = this;
     return target.split(search).join(replacement);
 };
+console.log(cmd.args[0]);
 if (option == "init") {
   var thisFile = __dirname.replaceAll("\\", "/");
   thisFile = thisFile.replace('/bin', '')
@@ -118,6 +119,7 @@ else if(option == "finalize")
 
   archive.finalize();
 }
+
 else
 {
   console.log(option + " is not a valid arcadier command")
