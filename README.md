@@ -65,6 +65,8 @@ This is where you will be connecting your code to the firebase project you made 
   * *Don't type anything and click enter*
 * Configure as a single-page app (rewrite all urls to /index.html)? (*This is very important*)
   * N
+* Set up automatic builds and deploys with GitHub?
+  * N
 
 This will automatically create the following in your folder:
 
