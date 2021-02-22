@@ -1,4 +1,3 @@
-// Write you admin side backend code here
 console.log("Back-end code for admin");
 $(document).ready(function(){
     var pc = $(".page-content").children();
@@ -11,12 +10,14 @@ $(document).ready(function(){
     flag = 0
     for (var x=0; x<lst.length; x++){
         if(lst[x].includes('firebaseapp')){
-            console.log('Firebaseapp');
+            console.log('Hosted from Firebaseapp');
             flag = 1;
         }
     }
     if(flag==0){
-        console.log('Arcadier');
+        console.log('Hosted from Arcadier');
     }
 });
+
+// Write you admin side backend code here
 
