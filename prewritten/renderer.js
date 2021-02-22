@@ -23,7 +23,7 @@ baseUrl = baseUrl.replace("server-files/renderer.js", "");
 var renderFile = "admin/html/index.html";
 
 var url = baseUrl + renderFile;
-url = url.replace("https://", "https://cors-anywhere.herokuapp.com/")
+url = url.replace("https://", "https://arcadier-cors.herokuapp.com/")
 var settings = {
    "url": url,
    "method": "GET",
@@ -122,8 +122,8 @@ $.getMultiScripts(http, '').done(function () {
            front.appendChild(newScript);
        }
    }
-   $.getMultiScripts(nonHttp).done(function(){
-     console.log("Done");
-   });
-
 });
+
+$.getMultiScripts(nonHttp).done(function(){
+    console.log("Done");
+  });
